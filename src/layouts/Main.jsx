@@ -12,36 +12,54 @@ class Main extends Component {
   }
 
   componentDidMount() {
-    this.search('matrix');
+    this.search('', '');
   }
 
-  search = (name) => {
-    this.setState({isLoading: true});
-    fetch('https://www.omdbapi.com/?apikey=d0acc7c0&s=' + name)
+  search = (name, type) => {
+    let api = '';
+    let nameS = name;
+    if (name === '') {
+      nameS = 'matrix';
+    }
+    if (type === 'all' | type === '') {
+      api = 'https://www.omdbapi.com/?apikey=d0acc7c0&s=' + nameS;
+      console.log('a');
+    } else if (type === 'movie') {
+      api = 'https://www.omdbapi.com/?apikey=d0acc7c0&s=' + nameS + '&type=movie';
+      console.log('m');
+    } else if (type === 'series') {
+      api = 'https://www.omdbapi.com/?apikey=d0acc7c0&s=' + nameS + '&type=series';
+      console.log('s');
+    }
+    console.log('here');
+    fetch(api)
       .then(res => res.json())
       .then((result) => {
+        this.setState({isLoading: true});
+        console.log(api);
         if (typeof result['Search'] !== 'undefined') {
           this.setState(() => ({
             movies: result.Search,
-            isLoading: false,
             manyResults: false,
             notFound: false
           }));
+          console.log('norm');
         } else if (result['Error'] === 'Too many results.') {
           this.setState(() => ({
             movies: [],
-            isLoading: false,
             manyResults: true,
             notFound: false
           }));
         } else if (result['Error'] === 'Movie not found!') {
           this.setState(() => ({
             movies: [],
-            isLoading: false,
             manyResults: false,
             notFound: true
           }));
-        }
+        }})
+      .then(() => {
+        this.setState({isLoading: false});
+        console.log('HERE');
       });
   }
 

@@ -22,6 +22,15 @@
 
 .loading, .many-results, .not-found {
   overflow: hidden;
-  height: calc(100vh - 64px - 127.36px);
+  height: calc(100vh - 64px - 126.9px);
+  margin: 0;
 }
 
+.flex {
+  display: flex;
+  text-align: center;
+}
+
+.Search {
+  margin: 0;
+}
