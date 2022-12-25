@@ -3,6 +3,8 @@ import { CardsList } from './components/CardsList';
 import { Preloader } from './components/Preloader';
 import { Search } from './components/Search';
 
+const API_KEY = process.env.API_KEY;
+
 class Main extends Component {
   state = {
     movies: [],
@@ -22,16 +24,12 @@ class Main extends Component {
       nameS = 'matrix';
     }
     if (type === 'all' | type === '') {
-      api = 'https://www.omdbapi.com/?apikey=d0acc7c0&s=' + nameS;
-      console.log('a');
+      api = `https://www.omdbapi.com/?apikey=${API_KEY}&s=${nameS}`;
     } else if (type === 'movie') {
-      api = 'https://www.omdbapi.com/?apikey=d0acc7c0&s=' + nameS + '&type=movie';
-      console.log('m');
+      api = `https://www.omdbapi.com/?apikey=${API_KEY}&s=${nameS}&type=movie`;
     } else if (type === 'series') {
-      api = 'https://www.omdbapi.com/?apikey=d0acc7c0&s=' + nameS + '&type=series';
-      console.log('s');
+      api = `https://www.omdbapi.com/?apikey=${API_KEY}&s=${nameS}&type=series`;
     }
-    console.log('here');
     fetch(api)
       .then(res => res.json())
       .then((result) => {
@@ -43,7 +41,6 @@ class Main extends Component {
             manyResults: false,
             notFound: false
           }));
-          console.log('norm');
         } else if (result['Error'] === 'Too many results.') {
           this.setState(() => ({
             movies: [],
@@ -59,7 +56,6 @@ class Main extends Component {
         }})
       .then(() => {
         this.setState({isLoading: false});
-        console.log('HERE');
       });
   }
 
