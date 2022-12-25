@@ -17,7 +17,7 @@ class Main extends Component {
 
   search = (name) => {
     this.setState({isLoading: true});
-    fetch('http://www.omdbapi.com/?apikey=d0acc7c0&s=' + name)
+    fetch('https://www.omdbapi.com/?apikey=d0acc7c0&s=' + name)
       .then(res => res.json())
       .then((result) => {
         if (typeof result['Search'] !== 'undefined') {
