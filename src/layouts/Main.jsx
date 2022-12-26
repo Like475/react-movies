@@ -1,94 +1,80 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import { CardsList } from './components/CardsList';
 import { Preloader } from './components/Preloader';
 import { Search } from './components/Search';
 
-const API_KEY = 'd0acc7c0';
+function Main() {
+  const [ movies, setMovies ] = useState([]);
+  const [ isLoading, setIsLoading ] = useState(true);
+  const [ manyResults, setManyResults ] = useState(false);
+  const [ notFound, setNotFound ] = useState(false);
 
-class Main extends Component {
-  state = {
-    movies: [],
-    isLoading: true,
-    manyResults: false,
-    notFound: false
-  }
-
-  componentDidMount() {
-    this.search('', '');
-  }
-
-  search = (name, type) => {
+  const search = (name, type) => {
     let api = '';
     let nameS = name;
     if (name === '') {
       nameS = 'matrix';
     }
     if (type === 'all' | type === '') {
-      api = `https://www.omdbapi.com/?apikey=${API_KEY}&s=${nameS}`;
+      api = `https://www.omdbapi.com/?apikey=d0acc7c0&s=${nameS}`;
     } else if (type === 'movie') {
-      api = `https://www.omdbapi.com/?apikey=${API_KEY}&s=${nameS}&type=movie`;
+      api = `https://www.omdbapi.com/?apikey=d0acc7c0&s=${nameS}&type=movie`;
     } else if (type === 'series') {
-      api = `https://www.omdbapi.com/?apikey=${API_KEY}&s=${nameS}&type=series`;
+      api = `https://www.omdbapi.com/?apikey=d0acc7c0&s=${nameS}&type=series`;
     }
     fetch(api)
       .then(res => res.json())
       .then((result) => {
-        this.setState({isLoading: true});
-        console.log(api);
+        setIsLoading(true);
         if (typeof result['Search'] !== 'undefined') {
-          this.setState(() => ({
-            movies: result.Search,
-            manyResults: false,
-            notFound: false
-          }));
+          setMovies(result.Search);
+          setManyResults(false);
+          setNotFound(false);
         } else if (result['Error'] === 'Too many results.') {
-          this.setState(() => ({
-            movies: [],
-            manyResults: true,
-            notFound: false
-          }));
+          setMovies([]);
+          setManyResults(true);
+          setNotFound(false);
         } else if (result['Error'] === 'Movie not found!') {
-          this.setState(() => ({
-            movies: [],
-            manyResults: false,
-            notFound: true
-          }));
+          setMovies([]);
+          setManyResults(false);
+          setNotFound(true);
         }})
       .then(() => {
-        this.setState({isLoading: false});
+        setIsLoading(false);
       });
   }
 
-  render() {
-    const { movies, isLoading, manyResults, notFound } = this.state;
-    return isLoading ? (
-      <main className="loading row">
-        <Search search={this.search} />
-        <Preloader />
+  useEffect(() => {
+    search('', '');
+  }, []);
+
+  return isLoading ? (
+    <main className="loading row">
+      <Search search={search} />
+      <Preloader />
+    </main>
+  ) : ( manyResults ? (
+      <main className="many-results row">
+        <Search search={search} />
+        <div className="container">
+          <h4>Too many results</h4>
+        </div>
       </main>
-    ) : ( manyResults ? (
-        <main className="many-results row">
-          <Search search={this.search} />
+    ) : ( notFound ? (
+        <main className="not-found row">
+          <Search search={search} />
           <div className="container">
-            <h4>Too many results</h4>
+            <h4>Movie not found!</h4>
           </div>
         </main>
-      ) : ( notFound ? (
-          <main className="not-found row">
-            <Search search={this.search} />
-            <div className="container">
-              <h4>Movie not found!</h4>
-            </div>
-          </main>
-        ) : (
-          <main className='row'>
-            <Search search={this.search} />
-            <CardsList movies={movies} />
-          </main>
-        )
+      ) : (
+        <main className='row'>
+          <Search search={search} />
+          <CardsList movies={movies} />
+        </main>
       )
-    );
-  }
+    )
+  );
 }
 
 export { Main };
