@@ -3,7 +3,7 @@ import { CardsList } from './components/CardsList';
 import { Preloader } from './components/Preloader';
 import { Search } from './components/Search';
 
-const API_KEY = process.env.API_KEY;
+const API_KEY = 'd0acc7c0';
 
 class Main extends Component {
   state = {
